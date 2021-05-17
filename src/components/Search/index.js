@@ -7,28 +7,25 @@ import Hit from './Hit'
 
 import * as S from './style'
 
-const algolia = {
-  appID: process.env.GATSBY_ALGOLIA_APP_ID,
-  searchOnlyApiKey: process.env.GATSBY_ALGOLIA_SEARCH_KEY,
-  indexName: process.env.GATSBY_ALGOLIA_INDEX_NAME
+const Search = ({ algolia }) => {
+  const searchClient = algoliasearch(algolia.appID, algolia.searchOnlyApiKey)
+
+  return (
+    <S.SearchWrapper>
+      <InstantSearch searchClient={searchClient} indexName={algolia.indexName}>
+        {/* eslint-disable-next-line jsx-a11y/no-autofocus */}
+        <SearchBox autoFocus translations={{ placeholder: 'Pesquisar...' }} />
+        <Stats
+          translations={{
+            stats (nbHits, timeSpentHs) {
+              return `${nbHits} resultados encontrados em ${timeSpentHs}ms`
+            }
+          }}
+        />
+        <Hits hitComponent={Hit} />
+      </InstantSearch>
+    </S.SearchWrapper>
+  )
 }
-
-const searchClient = algoliasearch(algolia.appID, algolia.searchOnlyApiKey)
-
-const Search = () => (
-  <S.SearchWrapper>
-    <InstantSearch searchClient={searchClient} indexName={algolia.indexName}>
-      <SearchBox translations={{ placeholder: 'Pesquisar...' }} />
-      <Stats
-        translations={{
-          stats (nbHits, timeSpentHs) {
-            return `${nbHits} resultados encontrados em ${timeSpentHs}ms`
-          }
-        }}
-      />
-      <Hits hitComponent={Hit} />
-    </InstantSearch>
-  </S.SearchWrapper>
-)
 
 export default Search
